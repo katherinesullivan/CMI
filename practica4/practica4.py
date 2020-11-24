@@ -32,7 +32,7 @@ def dijkstra(grafo, vertice):
     vertice_actual = vertice
     while len(vertices_visitados) < len(vertices):
         for ver in dicc_aristas[vertice_actual]:
-            if distancia[ver[0]] > ver[1]:
+            if distancia[ver[0]] > distancia[vertice_actual] + ver[1]:
                 distancia[ver[0]] = distancia[vertice_actual] + ver[1]
         next_vertice = []
         dist_min = float('inf')
