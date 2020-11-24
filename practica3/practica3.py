@@ -232,7 +232,17 @@ class Graph:
 
     def isElegibleNextEdge(self, u, v):
         """Determina si la arista (u,v) es elegible como próxima arista a visitar."""
-        pass
+        # si solo tengo esta arista para recorrer
+        if self.graph[u]==[v]:
+            return True
+        # si no tenemos que ver que la que elijamos no sea puente
+        reachableconarista = {}
+        self.reachableVertices(u, reachableconarista)
+        reachablesinarista = {}
+        self.removeEdge(u,v)
+        self.reachableVertices(u,reachablesinarista)
+        if 
+
 
     def printEuler(self, u):
         """Imprime un camino o ciclo euleriano comenzando desde el vértice u.
