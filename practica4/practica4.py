@@ -58,6 +58,41 @@ def dijkstra_2(grafo, vertice):
     Formato resultado: {'a': ['a'], 'b': ['a', 'b'], 'c': ['a', 'b', 'c']}
     (Nodos que no son claves significa que no hay camino a ellos)
     """
+
+    vertices = grafo[0]
+    aristas = grafo[1]
+    dicc_aristas = verticesADiccionario(grafo)
+    vertices_visitados = [vertice]
+    distancia = {}
+    caminos = {}
+    for v in vertices:
+        caminos[v] = [vertice]
+        if v != vertice:
+            distancia[v] = float('inf')
+        else:
+            distancia[v] = 0
+    vertice_actual = vertice
+    prox_ver = []
+    while len(vertices_visitados) < len(vertices):
+        for ar in dicc_aristas[vertice_actual]:
+            if distancia[ar[0]] > distancia[vertice_actual] + ar[1]:
+                distancia[ar[0]] = distancia[vertice_actual] + ar[1]
+                
+                prox_ver = [ar[0]] # ver bien
+        
+        next_vertice = []
+        dist_min = float('inf')
+        for v in vertices:
+            if v not in vertices_visitados:
+                if dist_min > distancia[v]:
+                    dist_min = distancia[v]
+                    next_vertice = v
+        vertice_actual = next_vertice
+        vertices_visitados.append(vertice_actual)
+    for v in vertices:
+        if distancia[v] == float('inf'):
+            del distancia[v]
+    
     return {}
 
 
