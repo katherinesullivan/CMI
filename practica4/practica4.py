@@ -50,7 +50,7 @@ def dijkstra(grafo, vertice):
 
 
 
-def dijkstra_2(grafo, vertice):
+def dijkstra_2(grafo, vertice): # NO ANDA
     """
     Dado un grafo (en formato de listas con pesos), aplica el algoritmo de
     Dijkstra para hallar el CAMINO mas corto desde el vertice de origen

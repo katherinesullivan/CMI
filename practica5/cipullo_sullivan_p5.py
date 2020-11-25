@@ -36,3 +36,9 @@ def prim(grafo):
                 aristas_a_recorrer.append((arista_a_agg[1], arista[0], arista[1]))
             aristas_visitadas.append(tuple(arista_a_agg))
     return MST
+
+
+# Al correr el test de la practica 5, en el test_1_2 el programa espera que el resultado del algoritmo incluya las aristas 
+# ('a', 'b', 10), ('b', 'd', 15), ('c', 'd', 6), pero el algoritmo devuelve ('a', 'b', 10), ('b', 'd', 15), ('d', 'c', 6), 
+# y por eso da error el test. Sin embargo, como estamos trabajando con grafos no dirigidos, ('c', 'd', 6) y ('d', 'c', 6) 
+# son la misma arista y el resultado del algoritmo estaría correcto.

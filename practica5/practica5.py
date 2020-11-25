@@ -50,7 +50,7 @@ def prim(grafo):
 
 
 
-def kruskal(grafo):
+def kruskal(grafo): # NO ANDA
     """
     Dado un grafo (en formato de listas con pesos), aplica el algoritmo de
     Kruskal y retorna el MST correspondiente (o un bosque, en el caso de que
@@ -81,14 +81,6 @@ def kruskal(grafo):
             # vertices_visitados = list(set(vertices_visitados))
 
 
-
-
-
-
-
-
-
-
             
             # for [ar,p] in dicc_aristas[min_arista[0]]:
             #         if min_arista[1] == ar:
@@ -102,29 +94,7 @@ def kruskal(grafo):
             #                 aristas.remove([min_arista[0],ar,p])
             #             if [ar,min_arista[0],p] in aristas:
             #                 aristas.remove([ar,min_arista[0],p])
-            
-            
-            
-            
-            
-            
-            # if min_arista[0] in vertices_visitados: 
-            #     # vertices_visitados.append(min_arista[1])
-            #     for [ar,p] in dicc_aristas[min_arista[1]]: # dudoso
-            #         if min_arista[0] == ar:
-            #             if [min_arista[0],ar,p] in aristas:
-            #                 aristas.remove([min_arista[0],ar,p])
-            #             if [ar,min_arista[0],p] in aristas:
-            #                 aristas.remove([ar,min_arista[0],p])
-            # else:
-            #     # vertices_visitados.append(min_arista[0])
-            #     for [ar,p] in dicc_aristas[min_arista[0]]:
-            #         if min_arista[1] == ar:
-            #             if [min_arista[1],ar,p] in aristas:
-            #                 aristas.remove([min_arista[1],ar,p])
-            #             if [ar,min_arista[1],p] in aristas:
-            #                 aristas.remove([ar,min_arista[1],p])
-    # MST = (vertices, aristas_visitadas)
+
 
 
 
@@ -142,6 +112,7 @@ def existe_camino(grafo, a, b):
                 if ar1 == ar2:
                     bandera = 1
         return bandera
+
 
 
 def main():
@@ -172,7 +143,6 @@ def main():
         )
     print(prim(grafo2))
     print(kruskal(grafo1))
-    # print(existe_camino(grafo2,'a','b'))
 
 
 if __name__ == "__main__":
@@ -184,6 +154,9 @@ if __name__ == "__main__":
 
 
 
+
+
+# EJEMPLO DE KRUSKAL QUE ANDA PERO CON OTRA ESTRUCTURA DE GRAFOS
 
 
 # parent = dict()

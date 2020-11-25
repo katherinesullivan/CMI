@@ -2,7 +2,7 @@
 
 import unittest
 
-import practica5 as p5
+import cipullo_sullivan_p5 as p5
 
 
 class TestPrim(unittest.TestCase):
