@@ -25,12 +25,14 @@ def draws_graph(grafo):
                 plt.plot(x_aristas,y_aristas)
     plt.draw()
     plt.show()
+    return 0
     
 
 
 def main():
     g = (['A','B','C'],[('A','B'),('B','C'),('C','A')])
-    g=draws_graph(g)
+    draws_graph(g)
+    print(coordenadas_random(3))
 
 if __name__ == '__main__':
     main()

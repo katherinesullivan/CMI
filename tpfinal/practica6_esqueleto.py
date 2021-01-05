@@ -9,6 +9,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
+# SI EL ALGORITMO ESTA BIEN IMPLEMENTADO, CADA GRAFO DEBERIA TENER UNA ÚNICA REPRESENTACIÓN ???
+
 def lee_grafo_archivo(file_path):
     '''
     Lee un grafo desde un archivo y devuelve su representacion como lista.
@@ -40,13 +42,14 @@ def lee_grafo_archivo(file_path):
     return grafo
 
 
+# Devuelve una lista con N números randon del 0 al 1000
 def coordenadas_random(N):
-    return np.random.rand(N) * 1000 # rango 1000 como en el gif??
+    return np.random.rand(N) * 1000 # rango 1000 como en el gif?? yup
 
 
 def draws_graph(grafo):
     n_vertices = len(grafo[0])
-    x_coordenadas = coordenadas_random(n_vertices)
+    x_coordenadas = coordenadas_random(n_vertices) # las coordenadas abria que pasarlas como parametro
     y_coordenadas = coordenadas_random(n_vertices)
     plt.scatter(x_coordenadas,y_coordenadas)
     for i in range(n_vertices):
@@ -65,12 +68,19 @@ def draws_graph(grafo):
     plt.show()
 
 
+# Inicializa los acumuladores en cero, N es el conjunto de los vértices.
 def initialize_accumulators(N):
     accum_x = {v: 0 for v in N}
     accum_y = {v: 0 for v in N}
     return accum_x, accum_y
 
+# Calcula la fuerza de atracción
+def f_attraction(d,k):
+    return (d^2)/k
 
+# Calula la fuerza de repulsión
+def f_repultion(d,k):
+    return (k^2)/d
 
 
 
@@ -103,13 +113,60 @@ class LayoutGraph:
         self.c1 = c1
         self.c2 = c2
 
+
     def layout(self):
         """
         Aplica el algoritmo de Fruchtermann-Reingold para obtener (y mostrar)
         un layout
         """
+        n_vertices = len(self.grafo[0])
 
-        pass
+        x_coordenadas = coordenadas_random(n_vertices)
+        y_coordenadas = coordenadas_random(n_vertices)
+
+        # ESTO SE PUEDE DEFINIR DE FORMA GLOBAL?
+        # k es el valor que refiere a la disperción de los nodos del grafo
+        kr = self.c1 * sqrt((1000*1000) / n_vertices)
+        ka = self.c2 * sqrt((1000*1000) / n_vertices)
+
+
+        for k in range(1, self.iters+1):
+            # Inicializar acumuladores a cero
+            accum_x, accum_y = initialize_accumulators(self.grafo[0])
+
+            # HABRIA QUE ARMAR UN ENUMERADO ENTRE LOS VERTICES Y SUS INDICES
+            # Calcular fuerzas de atracción
+            for e in self.grafo[1]:
+                distance = sqrt((x_coordenadas[] - x_coordenadas[])^2 + (y_coordenadas[] - y_coordenadas[])^2)
+                mod_fa = f_attraction(distance,ka)
+                fx = mod_fa * (x_coordenadas[] - x_coordenadas[]) / distance # ESTO ESTA BIEN? (EL *)
+                fy = mod_fa * (x_coordenadas[] - x_coordenadas[]) / distance
+                accum_x[e[0]] = accum_x[e[0]] + fx
+                accum_y[e[0]] = accum_y[e[0]] + fy
+                accum_x[e[1]] = accum_x[e[1]] - fx
+                accum_y[e[1]] = accum_y[e[1]] - fy
+
+            # Calcular fuerzas de repulsión
+            for i in range(n_vertices):
+                for j in range(n_vertices):
+                    if i != j:
+                        distance = sqrt((x_coordenadas[i] - x_coordenadas[j])^2 + (y_coordenadas[i] - y_coordenadas[j])^2)
+                        mod_fr = f_repultion(distance,kr)
+                        fx = mod_fr * (x_coordenadas[j] - x_coordenadas[i]) / distance # ESTO ESTA BIEN? (EL *)
+                        fy = mod_fr * (x_coordenadas[j] - x_coordenadas[i]) / distance
+                        accum_x[self.grafo[0][i]] = accum_x[self.grafo[0][i]] + fx
+                        accum_y[self.grafo[0][i]] = accum_y[self.grafo[0][i]] + fy
+                        accum_x[self.grafo[0][j]] = accum_x[self.grafo[0][j]] - fx
+                        accum_y[self.grafo[0][j]] = accum_y[self.grafo[0][j]] - fy
+            
+            # Actualizar posiciones
+            for i in range(n_vertices):
+                # QUE ONDA LOS BORDES DE LA VENTANA?
+                x_coordenadas[i] = x_coordenadas[i] + accum_x[self.grafo[0][i]]
+                y_coordenadas[i] = y_coordenadas[i] + accum_y[self.grafo[0][i]]
+        return
+
+
 
 
 def main():
