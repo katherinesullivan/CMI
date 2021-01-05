@@ -129,8 +129,14 @@ class LayoutGraph:
         kr = self.c1 * sqrt((1000*1000) / n_vertices)
         ka = self.c2 * sqrt((1000*1000) / n_vertices)
 
+        c = 0.95 # constante de reducción de temperatura
+        t0 = 100 # temperatura inicial, ES UN PARAMETRO O DE DONDE LA SACO?
 
-        for k in range(1, self.iters+1):
+
+        for k in range(1, self.iters+1): # el +1 esta bien??
+            # Inicializar temperatura
+            t = t0
+
             # Inicializar acumuladores a cero
             accum_x, accum_y = initialize_accumulators(self.grafo[0])
 
@@ -159,11 +165,24 @@ class LayoutGraph:
                         accum_x[self.grafo[0][j]] = accum_x[self.grafo[0][j]] - fx
                         accum_y[self.grafo[0][j]] = accum_y[self.grafo[0][j]] - fy
             
+            # Calcular fuerzas de gravedad
+            for i in 
+
+
             # Actualizar posiciones
             for i in range(n_vertices):
+                f = (accum_x[self.grafo[0][i]],accum_y[self.grafo[0][i]])
+                modulo_f = sqrt((f[0])^2 + (f[1])^2)
+                if modulo_f > t:
+                    f = (f/modulo_f) * t
+                    accum_x[self.grafo[0][i]], accum_y[self.grafo[0][i]] = f
+
                 # QUE ONDA LOS BORDES DE LA VENTANA?
                 x_coordenadas[i] = x_coordenadas[i] + accum_x[self.grafo[0][i]]
                 y_coordenadas[i] = y_coordenadas[i] + accum_y[self.grafo[0][i]]
+
+            # Actualizar temperatura
+            t = c * t
         return
 
 
