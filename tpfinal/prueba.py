@@ -23,8 +23,10 @@ def draws_graph(grafo):
                 y_aristas.append(y_coordenadas[i])
                 y_aristas.append(y_coordenadas[j])
                 plt.plot(x_aristas,y_aristas)
-    plt.draw()
-    plt.show()
+    
+    # plt.show()
+    # plt.pause(0.5)
+    # plt.clf()
     return 0
     
 
@@ -32,7 +34,16 @@ def draws_graph(grafo):
 def main():
     g = (['A','B','C'],[('A','B'),('B','C'),('C','A')])
     draws_graph(g)
-    print(coordenadas_random(3))
+    # print(coordenadas_random(3))
+
+    plt.show()
+    # plt.clf()
+    for i in range(5):
+        # plt.show()
+        draws_graph(g)
+        plt.pause(0.5)
+        plt.clf()
+
 
 if __name__ == '__main__':
     main()
