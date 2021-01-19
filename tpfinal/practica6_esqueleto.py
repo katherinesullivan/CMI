@@ -80,10 +80,13 @@ def initialize_accumulators(N):
 def f_attraction(d,k):
     return (d**2)/k
 
-# Calula la fuerza de repulsión
+# Calcula la fuerza de repulsión
 def f_repultion(d,k):
     return (k**2)/d
 
+# Calcula la fuerza de gravedad
+def f_gravity(d,k):
+    return k/d
 
 
 class LayoutGraph:
@@ -152,6 +155,7 @@ class LayoutGraph:
         # k es el valor que refiere a la disperción de los nodos del grafo
         kr = self.c1 * math.sqrt((DIMENSION*DIMENSION) / n_vertices)
         ka = self.c2 * math.sqrt((DIMENSION*DIMENSION) / n_vertices)
+        kg = 9.8
 
         c_temp = 0.95 # constante de reducción de temperatura
 
@@ -195,13 +199,13 @@ class LayoutGraph:
             
             # NI IDEA SI ESTA BIEN, FALTARIA LA FUNCION QUE CALCULA LA FUERZA DE GRAVEDAD
             # Calcular fuerzas de gravedad
-            # for i in range(n_vertices):
-            #     distance = math.sqrt((x_coordenadas[i] - centro[0])**2 + (y_coordenadas[i] - centro[1])**2)
-            #     mod_fg = f_gravedad(distance)
-            #     fx = mod_fg * (centro[0] - x_coordenadas[i]) / distance
-            #     fy = mod_fg * (centro[1] - y_coordenadas[i]) / distance
-            #     accum_x[self.grafo[0][i]] = accum_x[self.grafo[0][i]] + fx
-            #     accum_y[self.grafo[0][i]] = accum_y[self.grafo[0][i]] + fy
+            for i in range(n_vertices):
+                distance = math.sqrt((x_coordenadas[i] - centro[0])**2 + (y_coordenadas[i] - centro[1])**2)
+                #mod_fg = f_gravedad(distance,kg)
+                fx = kg * (centro[0] - x_coordenadas[i]) / distance
+                fy = kg * (centro[1] - y_coordenadas[i]) / distance
+                accum_x[self.grafo[0][i]] = accum_x[self.grafo[0][i]] + fx
+                accum_y[self.grafo[0][i]] = accum_y[self.grafo[0][i]] + fy
 
             # Actualizar posiciones
             for i in range(n_vertices):
@@ -228,7 +232,7 @@ class LayoutGraph:
                 # plt.pause(2) # QUE HACE?
                 plt.clf()
 
-        return
+    return
 
 
 
