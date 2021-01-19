@@ -171,17 +171,24 @@ class LayoutGraph:
             # Inicializar acumuladores a cero
             accum_x, accum_y = initialize_accumulators(self.grafo[0])
 
+            dicc_vert_a_idx = {}
+            i=0
+            for v in self.grafo[0]:
+                dicc_vert_a_idx[v]=i
+
+
             # HABRIA QUE ARMAR UN ENUMERADO ENTRE LOS VERTICES Y SUS INDICES
             # Calcular fuerzas de atracción
             # for e in self.grafo[1]:
-            #     distance = math.sqrt((x_coordenadas[] - x_coordenadas[])**2 + (y_coordenadas[] - y_coordenadas[])**2)
-            #     mod_fa = f_attraction(distance,ka)
-            #     fx = mod_fa * (x_coordenadas[] - x_coordenadas[]) / distance # ESTO ESTA BIEN? (EL *)
-            #     fy = mod_fa * (x_coordenadas[] - x_coordenadas[]) / distance
-            #     accum_x[e[0]] = accum_x[e[0]] + fx
-            #     accum_y[e[0]] = accum_y[e[0]] + fy
-            #     accum_x[e[1]] = accum_x[e[1]] - fx
-            #     accum_y[e[1]] = accum_y[e[1]] - fy
+                  
+                distance = math.sqrt((x_coordenadas[dicc_vert_a_idx[e[0]]] - x_coordenadas[dicc__vert_idx(e[1])])**2 + (y_coordenadas[dicc_vert_a_idx[]] - y_coordenadas[])**2)
+                mod_fa = f_attraction(distance,ka)
+                fx = mod_fa * (x_coordenadas[] - y_coordenadas[]) / distance # ESTO ESTA BIEN? (EL *)
+                fy = mod_fa * (x_coordenadas[] - y_coordenadas[]) / distance
+                accum_x[e[0]] = accum_x[e[0]] + fx
+                accum_y[e[0]] = accum_y[e[0]] + fy
+                accum_x[e[1]] = accum_x[e[1]] - fx
+                accum_y[e[1]] = accum_y[e[1]] - fy
 
             # Calcular fuerzas de repulsión
             for i in range(n_vertices):
