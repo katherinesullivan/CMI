@@ -175,16 +175,17 @@ class LayoutGraph:
             i=0
             for v in self.grafo[0]:
                 dicc_vert_a_idx[v]=i
+                i+=1
 
 
             # HABRIA QUE ARMAR UN ENUMERADO ENTRE LOS VERTICES Y SUS INDICES
             # Calcular fuerzas de atracción
-            # for e in self.grafo[1]:
-                  
-                distance = math.sqrt((x_coordenadas[dicc_vert_a_idx[e[0]]] - x_coordenadas[dicc__vert_idx(e[1])])**2 + (y_coordenadas[dicc_vert_a_idx[]] - y_coordenadas[])**2)
+            for e in self.grafo[1]:
+                distance = math.sqrt((x_coordenadas[dicc_vert_a_idx[e[0]]] - x_coordenadas[dicc_vert_a_idx[e[1]]])**2 + 
+                    (y_coordenadas[dicc_vert_a_idx[e[0]]] - y_coordenadas[dicc_vert_a_idx[e[1]]])**2)
                 mod_fa = f_attraction(distance,ka)
-                fx = mod_fa * (x_coordenadas[] - y_coordenadas[]) / distance # ESTO ESTA BIEN? (EL *)
-                fy = mod_fa * (x_coordenadas[] - y_coordenadas[]) / distance
+                fx = mod_fa * (x_coordenadas[dicc_vert_a_idx[e[1]]] - x_coordenadas[e[0]]) / distance # ESTO ESTA BIEN? (EL *)
+                fy = mod_fa * (y_coordenadas[dicc_vert_a_idx[e[1]]] - y_coordenadas[e[0]]) / distance
                 accum_x[e[0]] = accum_x[e[0]] + fx
                 accum_y[e[0]] = accum_y[e[0]] + fy
                 accum_x[e[1]] = accum_x[e[1]] - fx
@@ -197,7 +198,7 @@ class LayoutGraph:
                         distance = math.sqrt((x_coordenadas[i] - x_coordenadas[j])**2 + (y_coordenadas[i] - y_coordenadas[j])**2)
                         mod_fr = f_repultion(distance,kr)
                         fx = mod_fr * (x_coordenadas[j] - x_coordenadas[i]) / distance # ESTO ESTA BIEN? (EL *)
-                        fy = mod_fr * (x_coordenadas[j] - x_coordenadas[i]) / distance
+                        fy = mod_fr * (y_coordenadas[j] - y_coordenadas[i]) / distance
                         accum_x[self.grafo[0][i]] = accum_x[self.grafo[0][i]] + fx
                         accum_y[self.grafo[0][i]] = accum_y[self.grafo[0][i]] + fy
                         accum_x[self.grafo[0][j]] = accum_x[self.grafo[0][j]] - fx
