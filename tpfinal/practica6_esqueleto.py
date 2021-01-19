@@ -137,8 +137,6 @@ class LayoutGraph:
                     y_aristas.append(y_coordenadas[i])
                     y_aristas.append(y_coordenadas[j])
                     plt.plot(x_aristas,y_aristas)
-        plt.draw()
-        # plt.show()
 
 
     def layout(self):
@@ -161,8 +159,9 @@ class LayoutGraph:
 
         centro = (DIMENSION/2,DIMENSION/2)
 
-
-        for k in range(1, self.iters+1): # el +1 esta bien??
+        
+        plt.show()
+        for k in range(1, self.iters+1):
             
             ### BEGIN STEP ###
             
@@ -227,12 +226,12 @@ class LayoutGraph:
 
             ### PLOTEO ###
             if (k % self.refresh) == 0:
+                plt.axis([0,DIMENSION,0,DIMENSION])
                 self.draws_graph(x_coordenadas,y_coordenadas)
-                plt.show()
-                # plt.pause(2) # QUE HACE?
+                plt.pause(0.5)
                 plt.clf()
 
-    return
+        return
 
 
 
@@ -294,8 +293,8 @@ def main():
         refresh=1,
         c1=0.1,
         c2=5.0,
-        temperatura=args.temp
-        # verbose=args.verbose
+        temperatura=args.temp,
+        verbose=args.verbose
     )
 
     # Ejecutamos el layout
