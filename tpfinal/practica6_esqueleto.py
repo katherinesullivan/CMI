@@ -229,7 +229,7 @@ class LayoutGraph:
 
                 x_coordenadas[i] = x_coordenadas[i] + accum_x[self.grafo[0][i]]
                 y_coordenadas[i] = y_coordenadas[i] + accum_y[self.grafo[0][i]]
-                
+
                 # QUE ONDA LOS BORDES DE LA VENTANA?
                 if x_coordenadas[i] < 0:
                     x_coordenadas[i] = 0
@@ -239,6 +239,23 @@ class LayoutGraph:
                     y_coordenadas[i] = 0
                 elif y_coordenadas[i] > DIMENSION:
                     y_coordenadas[i] = DIMENSION
+
+                # Chequeamos que no choque con ningun vértice anterior
+                for j in range(i):
+                distance = math.sqrt((x_coordenadas[i] - x_coordenadas[j])**2 + (y_coordenadas[i] - y_coordenadas[j])**2)
+                if distance < 0.05:
+                    vector_direccion = (np.random.rand(), np.random.rand())
+                    vector_direccion_op = (-vector_direccion[0], -vector_direccion[1])
+                    x_coordenadas[i]= x_coordenadas[i] * vector_direccion[0]
+                    y_coordenadas[i]= y_coordenadas[i] * vector_direccion[1]
+                    x_coordenadas[j]= x_coordenadas[j] * vector_direccion_op[0]
+                    y_coordenadas[j]= y_coordenadas[j] * vector_direccion_op[1]
+                
+                # El volver a chocar?
+                # Pense fc como esta con un while hasta que nada choque
+                # pero eso clearly es costoso
+                # chequea solo hasta el punto que estamos y solo va achequear comparando
+                # con estos 2 nuevos
 
 
             # Actualizar temperatura
