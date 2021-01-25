@@ -171,11 +171,16 @@ class LayoutGraph:
             # Inicializar acumuladores a cero
             accum_x, accum_y = initialize_accumulators(self.grafo[0])
 
+            # ESTO NO VA FUERA DEL STEP()??
             dicc_vert_a_idx = {}
             i=0
             for v in self.grafo[0]:
                 dicc_vert_a_idx[v]=i
                 i+=1
+
+            # por la forma en la que itera sobre una lista
+            # for i in range(n_vertices):
+            #     dicc_vert_a_idx[self.grafo[0][i]] = i
 
 
             # HABRIA QUE ARMAR UN ENUMERADO ENTRE LOS VERTICES Y SUS INDICES
@@ -184,8 +189,8 @@ class LayoutGraph:
                 distance = math.sqrt((x_coordenadas[dicc_vert_a_idx[e[0]]] - x_coordenadas[dicc_vert_a_idx[e[1]]])**2 + 
                     (y_coordenadas[dicc_vert_a_idx[e[0]]] - y_coordenadas[dicc_vert_a_idx[e[1]]])**2)
                 mod_fa = f_attraction(distance,ka)
-                fx = mod_fa * (x_coordenadas[dicc_vert_a_idx[e[1]]] - x_coordenadas[e[0]]) / distance # ESTO ESTA BIEN? (EL *)
-                fy = mod_fa * (y_coordenadas[dicc_vert_a_idx[e[1]]] - y_coordenadas[e[0]]) / distance
+                fx = mod_fa * (x_coordenadas[dicc_vert_a_idx[e[1]]] - x_coordenadas[dicc_vert_a_idx[e[0]]]) / distance # ESTO ESTA BIEN? (EL *)
+                fy = mod_fa * (y_coordenadas[dicc_vert_a_idx[e[1]]] - y_coordenadas[dicc_vert_a_idx[e[0]]]) / distance
                 accum_x[e[0]] = accum_x[e[0]] + fx
                 accum_y[e[0]] = accum_y[e[0]] + fy
                 accum_x[e[1]] = accum_x[e[1]] - fx
@@ -222,9 +227,19 @@ class LayoutGraph:
                     f = (f[0]/modulo_f*t, f[1]/modulo_f*t)
                     accum_x[self.grafo[0][i]], accum_y[self.grafo[0][i]] = f
 
-                # QUE ONDA LOS BORDES DE LA VENTANA?
                 x_coordenadas[i] = x_coordenadas[i] + accum_x[self.grafo[0][i]]
                 y_coordenadas[i] = y_coordenadas[i] + accum_y[self.grafo[0][i]]
+                
+                # QUE ONDA LOS BORDES DE LA VENTANA?
+                if x_coordenadas[i] < 0:
+                    x_coordenadas[i] = 0
+                elif x_coordenadas[i] > DIMENSION:
+                    x_coordenadas[i] = DIMENSION
+                if y_coordenadas[i] < 0:
+                    y_coordenadas[i] = 0
+                elif y_coordenadas[i] > DIMENSION:
+                    y_coordenadas[i] = DIMENSION
+
 
             # Actualizar temperatura
             t = c_temp * t
@@ -236,7 +251,7 @@ class LayoutGraph:
             if (k % self.refresh) == 0:
                 plt.axis([0,DIMENSION,0,DIMENSION])
                 self.draws_graph(x_coordenadas,y_coordenadas)
-                plt.pause(0.5)
+                plt.pause(1)
                 plt.clf()
 
         return
