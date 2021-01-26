@@ -221,13 +221,13 @@ class LayoutGraph:
             
             # NI IDEA SI ESTA BIEN, FALTARIA LA FUNCION QUE CALCULA LA FUERZA DE GRAVEDAD
             # Calcular fuerzas de gravedad
-            for i in range(n_vertices):
-                distance = math.sqrt((x_coordenadas[i] - centro[0])**2 + (y_coordenadas[i] - centro[1])**2)
-                #mod_fg = f_attraction(distance,kg)
-                fx = kg * (centro[0] - x_coordenadas[i]) / distance
-                fy = kg * (centro[1] - y_coordenadas[i]) / distance
-                accum_x[self.grafo[0][i]] = accum_x[self.grafo[0][i]] + fx
-                accum_y[self.grafo[0][i]] = accum_y[self.grafo[0][i]] + fy
+            # for i in range(n_vertices):
+            #     distance = math.sqrt((x_coordenadas[i] - centro[0])**2 + (y_coordenadas[i] - centro[1])**2)
+            #     #mod_fg = f_attraction(distance,kg)
+            #     fx = kg * (centro[0] - x_coordenadas[i]) / distance
+            #     fy = kg * (centro[1] - y_coordenadas[i]) / distance
+            #     accum_x[self.grafo[0][i]] = accum_x[self.grafo[0][i]] + fx
+            #     accum_y[self.grafo[0][i]] = accum_y[self.grafo[0][i]] + fy
 
             # Actualizar posiciones
             for i in range(n_vertices):
@@ -279,7 +279,7 @@ class LayoutGraph:
             if (k % self.refresh) == 0:
                 plt.axis([0,DIMENSION,0,DIMENSION])
                 self.draws_graph(x_coordenadas,y_coordenadas)
-                plt.pause(1)
+                plt.pause(0.5)
                 plt.clf()
 
         return
@@ -329,8 +329,6 @@ def main():
 
     # Leo el grafo del archivo pasado
     grafo_archivo = lee_grafo_archivo(args.file_name)
-
-    print(grafo_archivo)
 
 
     # TODO: Borrar antes de la entrega
