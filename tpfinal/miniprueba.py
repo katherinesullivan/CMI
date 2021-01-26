@@ -14,7 +14,7 @@ def main():
         if distance < 0.05:
             vector_direccion = (np.random.rand(), np.random.rand())
             vector_direccion_op = (-vector_direccion[0], -vector_direccion[1])
-            x_coordenadas[i]= x_coordenadas[i] * vector_direccion[0]
+            x_coordenadas[i]= x_coordenadas[i] + vector_direccion[0]
             y_coordenadas[i]= y_coordenadas[i] * vector_direccion[1]
             x_coordenadas[j]= x_coordenadas[j] * vector_direccion_op[0]
             y_coordenadas[j]= y_coordenadas[j] * vector_direccion_op[1]
@@ -24,5 +24,12 @@ def main():
     print(y_coordenadas[0])
     print(x_coordenadas[1])
     print(y_coordenadas[1])
+    lista4 = []
+    lista2 = [1]
+    lista3 = [2]
+    lista4 += lista2
+    lista3 += lista2
+    print(lista4)
+    print(lista3)
 
 main()

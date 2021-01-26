@@ -257,6 +257,37 @@ class LayoutGraph:
                 # chequea solo hasta el punto que estamos y solo va achequear comparando
                 # con estos 2 nuevos
 
+                # NO SE
+                # seria afuera pero
+                # def evitar_colisiones (i, x_coordenadas, y_coordenadas):
+                changed = []
+                for j in range(i):
+                    distance = math.sqrt((x_coordenadas[i] - x_coordenadas[j])**2 + (y_coordenadas[i] - y_coordenadas[j])**2)
+                    if distance < 0.05:
+                        changed += [j]
+                        vector_direccion = (np.random.rand(), np.random.rand())
+                        vector_direccion_op = (-vector_direccion[0], -vector_direccion[1])
+                        x_coordenadas[i]= x_coordenadas[i] * vector_direccion[0]
+                        y_coordenadas[i]= y_coordenadas[i] * vector_direccion[1]
+                        x_coordenadas[j]= x_coordenadas[j] * vector_direccion_op[0]
+                        y_coordenadas[j]= y_coordenadas[j] * vector_direccion_op[1]
+
+                if changed == [] :
+                    return
+
+                else
+
+                for elem in changed: 
+
+                    call this same function with elem
+
+                call this function with i
+
+                # cosas que capaz estaria weno pero si no fue
+                # ver de que no cambien tanto los numeros en esto que hice pues dumb
+                # y no se me ocurre otra forma de hacer esa fuerza~
+                # definir una funcion distance
+
 
             # Actualizar temperatura
             t = c_temp * t
