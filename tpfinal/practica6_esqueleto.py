@@ -9,7 +9,7 @@ import argparse
 import matplotlib.pyplot as plt
 import numpy as np
 
-DIMENSION = 1000 # rango del gráfico
+DIMENSION = 500 # rango del gráfico
 
 # SI EL ALGORITMO ESTA BIEN IMPLEMENTADO, CADA GRAFO DEBERIA TENER UNA ÚNICA REPRESENTACIÓN ???
 
@@ -88,6 +88,30 @@ def f_repultion(d,k):
 def f_gravity(d,k):
     return k/d
 
+def evitar_colisiones (i, x_coordenadas, y_coordenadas):
+    changed = []
+
+    for j in range(i):
+        distance = math.sqrt((x_coordenadas[i] - x_coordenadas[j])**2 + (y_coordenadas[i] - y_coordenadas[j])**2)
+        if distance < 0.05:
+            changed += [j]
+            vector_direccion = (np.random.rand(), np.random.rand())
+            vector_direccion_op = (-vector_direccion[0], -vector_direccion[1])
+            x_coordenadas[i]= x_coordenadas[i] * vector_direccion[0]
+            y_coordenadas[i]= y_coordenadas[i] * vector_direccion[1]
+            x_coordenadas[j]= x_coordenadas[j] * vector_direccion_op[0]
+            y_coordenadas[j]= y_coordenadas[j] * vector_direccion_op[1]
+
+    if changed == [] :
+        return
+
+    else:
+        for elem in changed: 
+            evitar_colisiones(elem, x_coordenadas, y_coordenadas)
+
+        evitar_colisiones(i, x_coordenadas, y_coordenadas)
+
+    return
 
 class LayoutGraph:
 
@@ -153,12 +177,15 @@ class LayoutGraph:
         # k es el valor que refiere a la disperción de los nodos del grafo
         kr = self.c1 * math.sqrt((DIMENSION*DIMENSION) / n_vertices)
         ka = self.c2 * math.sqrt((DIMENSION*DIMENSION) / n_vertices)
-        kg = 9.8
+        kg = 0.01
 
         c_temp = 0.95 # constante de reducción de temperatura
 
         centro = (DIMENSION/2,DIMENSION/2)
-
+        
+        dicc_vert_a_idx = {}
+        for i in range(n_vertices):
+            dicc_vert_a_idx[self.grafo[0][i]] = i
         
         plt.show()
         for k in range(1, self.iters+1):
@@ -170,17 +197,6 @@ class LayoutGraph:
 
             # Inicializar acumuladores a cero
             accum_x, accum_y = initialize_accumulators(self.grafo[0])
-
-            # ESTO NO VA FUERA DEL STEP()??
-            dicc_vert_a_idx = {}
-            i=0
-            for v in self.grafo[0]:
-                dicc_vert_a_idx[v]=i
-                i+=1
-
-            # por la forma en la que itera sobre una lista
-            # for i in range(n_vertices):
-            #     dicc_vert_a_idx[self.grafo[0][i]] = i
 
 
             # HABRIA QUE ARMAR UN ENUMERADO ENTRE LOS VERTICES Y SUS INDICES
@@ -241,15 +257,7 @@ class LayoutGraph:
                     y_coordenadas[i] = DIMENSION
 
                 # Chequeamos que no choque con ningun vértice anterior
-                for j in range(i):
-                distance = math.sqrt((x_coordenadas[i] - x_coordenadas[j])**2 + (y_coordenadas[i] - y_coordenadas[j])**2)
-                if distance < 0.05:
-                    vector_direccion = (np.random.rand(), np.random.rand())
-                    vector_direccion_op = (-vector_direccion[0], -vector_direccion[1])
-                    x_coordenadas[i]= x_coordenadas[i] * vector_direccion[0]
-                    y_coordenadas[i]= y_coordenadas[i] * vector_direccion[1]
-                    x_coordenadas[j]= x_coordenadas[j] * vector_direccion_op[0]
-                    y_coordenadas[j]= y_coordenadas[j] * vector_direccion_op[1]
+                evitar_colisiones(i, x_coordenadas, y_coordenadas)
                 
                 # El volver a chocar?
                 # Pense fc como esta con un while hasta que nada choque
@@ -259,29 +267,7 @@ class LayoutGraph:
 
                 # NO SE
                 # seria afuera pero
-                # def evitar_colisiones (i, x_coordenadas, y_coordenadas):
-                changed = []
-                for j in range(i):
-                    distance = math.sqrt((x_coordenadas[i] - x_coordenadas[j])**2 + (y_coordenadas[i] - y_coordenadas[j])**2)
-                    if distance < 0.05:
-                        changed += [j]
-                        vector_direccion = (np.random.rand(), np.random.rand())
-                        vector_direccion_op = (-vector_direccion[0], -vector_direccion[1])
-                        x_coordenadas[i]= x_coordenadas[i] * vector_direccion[0]
-                        y_coordenadas[i]= y_coordenadas[i] * vector_direccion[1]
-                        x_coordenadas[j]= x_coordenadas[j] * vector_direccion_op[0]
-                        y_coordenadas[j]= y_coordenadas[j] * vector_direccion_op[1]
-
-                if changed == [] :
-                    return
-
-                else
-
-                for elem in changed: 
-
-                    call this same function with elem
-
-                call this function with i
+                
 
                 # cosas que capaz estaria weno pero si no fue
                 # ver de que no cambien tanto los numeros en esto que hice pues dumb
