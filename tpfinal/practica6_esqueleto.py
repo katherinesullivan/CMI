@@ -37,9 +37,7 @@ def lee_grafo_archivo(file_path):
             vertices.append(vertice)
             n-=1
         for line in f:
-            arista= []
-            arista.append(line[0])
-            arista.append(line[2])
+            arista = line.split()
             aristas.append(tuple(arista))
     return grafo
 
@@ -82,7 +80,7 @@ def f_attraction(d,k):
 
 # Calcula la fuerza de repulsión
 def f_repultion(d,k):
-    return (k**2)/d
+    return -(k**2)/d
 
 # Calcula la fuerza de gravedad
 def f_gravity(d,k):
@@ -177,7 +175,7 @@ class LayoutGraph:
         # k es el valor que refiere a la disperción de los nodos del grafo
         kr = self.c1 * math.sqrt((DIMENSION*DIMENSION) / n_vertices)
         ka = self.c2 * math.sqrt((DIMENSION*DIMENSION) / n_vertices)
-        kg = 0.01
+        kg = 0.098 * math.sqrt((DIMENSION*DIMENSION) / n_vertices)
 
         c_temp = 0.95 # constante de reducción de temperatura
 
@@ -229,7 +227,7 @@ class LayoutGraph:
             # Calcular fuerzas de gravedad
             for i in range(n_vertices):
                 distance = math.sqrt((x_coordenadas[i] - centro[0])**2 + (y_coordenadas[i] - centro[1])**2)
-                #mod_fg = f_gravedad(distance,kg)
+                #mod_fg = f_attraction(distance,kg)
                 fx = kg * (centro[0] - x_coordenadas[i]) / distance
                 fy = kg * (centro[1] - y_coordenadas[i]) / distance
                 accum_x[self.grafo[0][i]] = accum_x[self.grafo[0][i]] + fx
@@ -345,7 +343,7 @@ def main():
 
     # Creamos nuestro objeto LayoutGraph
     layout_gr = LayoutGraph(
-        grafo=grafo1,  # TODO: Cambiar para usar grafo leido de archivo
+        grafo=grafo_archivo,  # TODO: Cambiar para usar grafo leido de archivo
         iters=args.iters,
         refresh=1,
         c1=0.1,
