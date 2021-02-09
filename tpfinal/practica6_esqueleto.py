@@ -107,6 +107,7 @@ def evitar_colisiones (i, x_coordenadas, y_coordenadas):
 
     return
 
+
 class LayoutGraph:
 
     def __init__(self, grafo, iters, refresh, c1, c2, temperatura, verbose=False):
@@ -205,10 +206,12 @@ class LayoutGraph:
                 accum_y[e[0]] = accum_y[e[0]] + fy
                 accum_x[e[1]] = accum_x[e[1]] - fx
                 accum_y[e[1]] = accum_y[e[1]] - fy
+                print("at entre ", e[0], "y ", e[1],"\nx: ",fx,"\ny: ",fy)
 
             # Calcular fuerzas de repulsión
             for i in range(n_vertices):
                 for j in range(n_vertices):
+                # for j in range(i,n_vertices):
                     if i != j:
                         distance = math.sqrt((x_coordenadas[i] - x_coordenadas[j])**2 + (y_coordenadas[i] - y_coordenadas[j])**2)
                         mod_fr = f_repultion(distance,kr)
@@ -218,16 +221,17 @@ class LayoutGraph:
                         accum_y[self.grafo[0][i]] = accum_y[self.grafo[0][i]] + fy
                         accum_x[self.grafo[0][j]] = accum_x[self.grafo[0][j]] - fx
                         accum_y[self.grafo[0][j]] = accum_y[self.grafo[0][j]] - fy
+                        print("rep entre ", self.grafo[0][i], "y ", self.grafo[0][j],"\nx: ",fx,"\ny: ",fy)
             
             # NI IDEA SI ESTA BIEN, FALTARIA LA FUNCION QUE CALCULA LA FUERZA DE GRAVEDAD
             # Calcular fuerzas de gravedad
-            # for i in range(n_vertices):
-            #     distance = math.sqrt((x_coordenadas[i] - centro[0])**2 + (y_coordenadas[i] - centro[1])**2)
-            #     #mod_fg = f_attraction(distance,kg)
-            #     fx = kg * (centro[0] - x_coordenadas[i]) / distance
-            #     fy = kg * (centro[1] - y_coordenadas[i]) / distance
-            #     accum_x[self.grafo[0][i]] = accum_x[self.grafo[0][i]] + fx
-            #     accum_y[self.grafo[0][i]] = accum_y[self.grafo[0][i]] + fy
+            for i in range(n_vertices):
+                distance = math.sqrt((x_coordenadas[i] - centro[0])**2 + (y_coordenadas[i] - centro[1])**2)
+                fx = kg * (centro[0] - x_coordenadas[i]) / distance
+                fy = kg * (centro[1] - y_coordenadas[i]) / distance
+                accum_x[self.grafo[0][i]] = accum_x[self.grafo[0][i]] + fx
+                accum_y[self.grafo[0][i]] = accum_y[self.grafo[0][i]] + fy
+                print("grav de", self.grafo[0][i],"\nx: ",fx,"\ny: ",fy)
 
             # Actualizar posiciones
             for i in range(n_vertices):
@@ -269,6 +273,9 @@ class LayoutGraph:
                 # definir una funcion distance
 
 
+                # El calculo de la fuerza de repulsion calcula todo dos veces por cada arista, eso esta mal i think
+
+
             # Actualizar temperatura
             t = c_temp * t
 
@@ -282,6 +289,7 @@ class LayoutGraph:
                 plt.pause(0.5)
                 plt.clf()
 
+    
         return
 
 
