@@ -82,6 +82,10 @@ def f_attraction(d,k):
 def f_repultion(d,k):
     return -(k**2)/d
 
+# Calcula la fuerza de gravedad
+def f_gravity(d,k):
+    return k/(d**2)
+
 def evitar_colisiones (i, x_coordenadas, y_coordenadas):
     changed = []
 
@@ -211,7 +215,7 @@ class LayoutGraph:
             # Calcular fuerzas de repulsión
             for i in range(n_vertices):
                 for j in range(n_vertices):
-                # for j in range(i,n_vertices):
+                #for j in range(i,n_vertices):
                     if i != j:
                         distance = math.sqrt((x_coordenadas[i] - x_coordenadas[j])**2 + (y_coordenadas[i] - y_coordenadas[j])**2)
                         mod_fr = f_repultion(distance,kr)
@@ -227,8 +231,9 @@ class LayoutGraph:
             # Calcular fuerzas de gravedad
             for i in range(n_vertices):
                 distance = math.sqrt((x_coordenadas[i] - centro[0])**2 + (y_coordenadas[i] - centro[1])**2)
-                fx = kg * (centro[0] - x_coordenadas[i]) / distance
-                fy = kg * (centro[1] - y_coordenadas[i]) / distance
+                mod_fg = f_gravity(distance, kg)
+                fx = mod_fg * (centro[0] - x_coordenadas[i]) / distance
+                fy = mod_fg * (centro[1] - y_coordenadas[i]) / distance
                 accum_x[self.grafo[0][i]] = accum_x[self.grafo[0][i]] + fx
                 accum_y[self.grafo[0][i]] = accum_y[self.grafo[0][i]] + fy
                 print("grav de", self.grafo[0][i],"\nx: ",fx,"\ny: ",fy)
