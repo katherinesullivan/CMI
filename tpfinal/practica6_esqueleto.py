@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 DIMENSION = 500 # rango del gráfico
+EPSILON = 0.05
 
 # SI EL ALGORITMO ESTA BIEN IMPLEMENTADO, CADA GRAFO DEBERIA TENER UNA ÚNICA REPRESENTACIÓN ???
 
@@ -87,7 +88,7 @@ def evitar_colisiones (i, x_coordenadas, y_coordenadas):
 
     for j in range(i):
         distance = math.sqrt((x_coordenadas[i] - x_coordenadas[j])**2 + (y_coordenadas[i] - y_coordenadas[j])**2)
-        if distance < 0.05:
+        if distance < EPSILON:
             changed += [j]
             vector_direccion = (np.random.rand(), np.random.rand())
             vector_direccion_op = (-vector_direccion[0], -vector_direccion[1])
@@ -182,8 +183,11 @@ class LayoutGraph:
         for i in range(n_vertices):
             dicc_vert_a_idx[self.grafo[0][i]] = i
         
+        verboseprint = print if self.verbose else lambda *a: None
+
         plt.show()
         for k in range(1, self.iters+1):
+            verboseprint("Iteración: ",k)
             
             ### BEGIN STEP ###
             
@@ -227,8 +231,9 @@ class LayoutGraph:
             # Calcular fuerzas de gravedad
             for i in range(n_vertices):
                 distance = math.sqrt((x_coordenadas[i] - centro[0])**2 + (y_coordenadas[i] - centro[1])**2)
-                fx = kg * (centro[0] - x_coordenadas[i]) / distance
-                fy = kg * (centro[1] - y_coordenadas[i]) / distance
+                mod_fg = f_attraction(distance,kg)
+                fx = mod_fg * (centro[0] - x_coordenadas[i]) / distance
+                fy = mod_fg * (centro[1] - y_coordenadas[i]) / distance
                 accum_x[self.grafo[0][i]] = accum_x[self.grafo[0][i]] + fx
                 accum_y[self.grafo[0][i]] = accum_y[self.grafo[0][i]] + fy
                 print("grav de", self.grafo[0][i],"\nx: ",fx,"\ny: ",fy)
@@ -256,6 +261,9 @@ class LayoutGraph:
 
                 # Chequeamos que no choque con ningun vértice anterior
                 evitar_colisiones(i, x_coordenadas, y_coordenadas)
+
+                verboseprint("Posición del vértice",self.grafo[0][i],": (",x_coordenadas[i],",",y_coordenadas[i],")")
+
                 
                 # El volver a chocar?
                 # Pense fc como esta con un while hasta que nada choque
@@ -272,8 +280,6 @@ class LayoutGraph:
                 # y no se me ocurre otra forma de hacer esa fuerza~
                 # definir una funcion distance
 
-
-                # El calculo de la fuerza de repulsion calcula todo dos veces por cada arista, eso esta mal i think
 
 
             # Actualizar temperatura
