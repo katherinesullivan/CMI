@@ -9,7 +9,7 @@ import argparse
 import matplotlib.pyplot as plt
 import numpy as np
 
-DIMENSION = 500 # rango del gráfico
+DIMENSION = 1000 # rango del gráfico
 EPSILON = 0.05
 
 # SI EL ALGORITMO ESTA BIEN IMPLEMENTADO, CADA GRAFO DEBERIA TENER UNA ÚNICA REPRESENTACIÓN ???
@@ -46,28 +46,6 @@ def lee_grafo_archivo(file_path):
 # Devuelve una lista con N números randon del 0 al 1000
 def coordenadas_random(N):
     return np.random.rand(N) * DIMENSION # rango 1000 como en el gif?? yup
-
-
-# def draws_graph(grafo, x_coordenadas, y_coordenadas):
-#     n_vertices = len(grafo[0])
-#     # x_coordenadas = coordenadas_random(n_vertices) # las coordenadas abria que pasarlas como parametro
-#     # y_coordenadas = coordenadas_random(n_vertices)
-#     plt.scatter(x_coordenadas,y_coordenadas)
-#     for i in range(n_vertices):
-#         x_aristas = []
-#         y_aristas = []
-#         for j in range(n_vertices):
-#             v1 = grafo[0][i]
-#             v2 = grafo[0][j]
-#             if (v1,v2) in grafo[1]:
-#                 x_aristas.append(x_coordenadas[i])
-#                 x_aristas.append(x_coordenadas[j])
-#                 y_aristas.append(y_coordenadas[i])
-#                 y_aristas.append(y_coordenadas[j])
-#                 plt.plot(x_aristas,y_aristas)
-#     plt.draw()
-#     plt.show()
-
 
 # Inicializa los acumuladores en cero, N es el conjunto de los vértices.
 def initialize_accumulators(N):
@@ -113,9 +91,10 @@ def evitar_colisiones (i, x_coordenadas, y_coordenadas):
     return
 
 
+
 class LayoutGraph:
 
-    def __init__(self, grafo, iters, refresh, c1, c2, temperatura, verbose=False):
+    def __init__(self, grafo, iters, refresh, c1, c2, temperatura, c_temp, verbose=False):
         """
         Parámetros:
         grafo: grafo en formato lista
@@ -123,6 +102,8 @@ class LayoutGraph:
         refresh: cada cuántas iteraciones graficar. Si su valor es cero, entonces debe graficarse solo al final.
         c1: constante de repulsión
         c2: constante de atracción
+        temperatura: tempeatura inicial
+        c_temp: constante de reducción de temperatura
         verbose: si está encendido, activa los comentarios
         """
 
@@ -136,19 +117,19 @@ class LayoutGraph:
 
         # Guardo opciones
         self.iters = iters
-        self.verbose = verbose
-        # TODO: faltan opciones
-        self.temperatura = temperatura
         self.refresh = refresh
         self.c1 = c1
         self.c2 = c2
+        self.temperatura = temperatura
+        self.c_temp = c_temp
+        self.verbose = verbose
 
 
     def draws_graph(self, x_coordenadas, y_coordenadas):
         n_vertices = len(self.grafo[0])
         # x_coordenadas = coordenadas_random(n_vertices) # las coordenadas abria que pasarlas como parametro
         # y_coordenadas = coordenadas_random(n_vertices)
-        plt.scatter(x_coordenadas,y_coordenadas)
+        plt.scatter(x_coordenadas,y_coordenadas,color='00')
         for i in range(n_vertices):
             x_aristas = []
             y_aristas = []
@@ -160,49 +141,41 @@ class LayoutGraph:
                     x_aristas.append(x_coordenadas[j])
                     y_aristas.append(y_coordenadas[i])
                     y_aristas.append(y_coordenadas[j])
-                    plt.plot(x_aristas,y_aristas)
+                    plt.plot(x_aristas,y_aristas,color='00')
 
 
     def layout(self):
         """
-        Aplica el algoritmo de Fruchtermann-Reingold para obtener (y mostrar)
-        un layout
+        Aplica el algoritmo de Fruchtermann-Reingold para obtener (y mostrar) un layout
         """
+        verboseprint = print if self.verbose else lambda *a: None
+        
         n_vertices = len(self.grafo[0])
-
         x_coordenadas = coordenadas_random(n_vertices)
-        y_coordenadas = coordenadas_random(n_vertices)
-
-        # ESTO SE PUEDE DEFINIR DE FORMA GLOBAL?
-        # k es el valor que refiere a la disperción de los nodos del grafo
+        y_coordenadas = coordenadas_random(n_vertices)      
+        # constantes de disperción de los nodos del grafo
         kr = self.c1 * math.sqrt((DIMENSION*DIMENSION) / n_vertices)
         ka = self.c2 * math.sqrt((DIMENSION*DIMENSION) / n_vertices)
-        kg = 0.098 * math.sqrt((DIMENSION*DIMENSION) / n_vertices)
-
-        c_temp = 0.95 # constante de reducción de temperatura
+        kg = 0.98 * math.sqrt((DIMENSION*DIMENSION) / n_vertices)
 
         centro = (DIMENSION/2,DIMENSION/2)
         
-        dicc_vert_a_idx = {}
+        dicc_vert_a_idx = {} # diccionario entre vértices y sus índices
         for i in range(n_vertices):
             dicc_vert_a_idx[self.grafo[0][i]] = i
         
-        verboseprint = print if self.verbose else lambda *a: None
+        # Inicializar temperatura
+        t = self.temperatura
 
         plt.show()
         for k in range(1, self.iters+1):
             verboseprint("Iteración: ",k)
             
             ### BEGIN STEP ###
-            
-            # Inicializar temperatura
-            t = self.temperatura
 
             # Inicializar acumuladores a cero
             accum_x, accum_y = initialize_accumulators(self.grafo[0])
 
-
-            # HABRIA QUE ARMAR UN ENUMERADO ENTRE LOS VERTICES Y SUS INDICES
             # Calcular fuerzas de atracción
             for e in self.grafo[1]:
                 distance = math.sqrt((x_coordenadas[dicc_vert_a_idx[e[0]]] - x_coordenadas[dicc_vert_a_idx[e[1]]])**2 + 
@@ -214,22 +187,21 @@ class LayoutGraph:
                 accum_y[e[0]] = accum_y[e[0]] + fy
                 accum_x[e[1]] = accum_x[e[1]] - fx
                 accum_y[e[1]] = accum_y[e[1]] - fy
-                print("at entre ", e[0], "y ", e[1],"\nx: ",fx,"\ny: ",fy)
+                # print("at entre ", e[0], "y ", e[1],"\nx: ",fx,"\ny: ",fy)
 
             # Calcular fuerzas de repulsión
             for i in range(n_vertices):
                 for j in range(n_vertices):
-                #for j in range(i,n_vertices):
                     if i != j:
                         distance = math.sqrt((x_coordenadas[i] - x_coordenadas[j])**2 + (y_coordenadas[i] - y_coordenadas[j])**2)
                         mod_fr = f_repultion(distance,kr)
-                        fx = mod_fr * (x_coordenadas[j] - x_coordenadas[i]) / distance # ESTO ESTA BIEN? (EL *)
+                        fx = mod_fr * (x_coordenadas[j] - x_coordenadas[i]) / distance
                         fy = mod_fr * (y_coordenadas[j] - y_coordenadas[i]) / distance
                         accum_x[self.grafo[0][i]] = accum_x[self.grafo[0][i]] + fx
                         accum_y[self.grafo[0][i]] = accum_y[self.grafo[0][i]] + fy
                         accum_x[self.grafo[0][j]] = accum_x[self.grafo[0][j]] - fx
                         accum_y[self.grafo[0][j]] = accum_y[self.grafo[0][j]] - fy
-                        print("rep entre ", self.grafo[0][i], "y ", self.grafo[0][j],"\nx: ",fx,"\ny: ",fy)
+                        # print("rep entre ", self.grafo[0][i], "y ", self.grafo[0][j],"\nx: ",fx,"\ny: ",fy)
             
             # NI IDEA SI ESTA BIEN, FALTARIA LA FUNCION QUE CALCULA LA FUERZA DE GRAVEDAD
             # Calcular fuerzas de gravedad
@@ -240,7 +212,7 @@ class LayoutGraph:
                 fy = mod_fg * (centro[1] - y_coordenadas[i]) / distance
                 accum_x[self.grafo[0][i]] = accum_x[self.grafo[0][i]] + fx
                 accum_y[self.grafo[0][i]] = accum_y[self.grafo[0][i]] + fy
-                print("grav de", self.grafo[0][i],"\nx: ",fx,"\ny: ",fy)
+                # print("grav de", self.grafo[0][i],"\nx: ",fx,"\ny: ",fy)
 
             # Actualizar posiciones
             for i in range(n_vertices):
@@ -253,15 +225,15 @@ class LayoutGraph:
                 x_coordenadas[i] = x_coordenadas[i] + accum_x[self.grafo[0][i]]
                 y_coordenadas[i] = y_coordenadas[i] + accum_y[self.grafo[0][i]]
 
-                # QUE ONDA LOS BORDES DE LA VENTANA?
+                # Evita que los vértices superen las dimensiones de los bordes de la ventada sobre la que se grafica.
                 if x_coordenadas[i] < 0:
-                    x_coordenadas[i] = 0
+                    x_coordenadas[i] = 2
                 elif x_coordenadas[i] > DIMENSION:
-                    x_coordenadas[i] = DIMENSION
+                    x_coordenadas[i] = DIMENSION - 2
                 if y_coordenadas[i] < 0:
-                    y_coordenadas[i] = 0
+                    y_coordenadas[i] = 2
                 elif y_coordenadas[i] > DIMENSION:
-                    y_coordenadas[i] = DIMENSION
+                    y_coordenadas[i] = DIMENSION - 2
 
                 # Chequeamos que no choque con ningun vértice anterior
                 evitar_colisiones(i, x_coordenadas, y_coordenadas)
@@ -284,13 +256,11 @@ class LayoutGraph:
                 # y no se me ocurre otra forma de hacer esa fuerza~
                 # definir una funcion distance
 
-
-
             # Actualizar temperatura
-            t = c_temp * t
+            t = self.c_temp * t
+            verboseprint("Temperatura actual:",t)
 
             ### END STEP ###
-
 
             ### PLOTEO ###
             if (k % self.refresh) == 0:
@@ -337,31 +307,19 @@ def main():
 
     args = parser.parse_args()
 
-    # Descomentar abajo para ver funcionamiento de argparse
-    # print(args.verbose)
-    # print(args.iters) 
-    # print(args.file_name)
-    # print(args.temp)
-    # return
-
-
     # Leo el grafo del archivo pasado
-    grafo_archivo = lee_grafo_archivo(args.file_name)
-
-
-    # TODO: Borrar antes de la entrega
-    grafo1 = ([1, 2, 3, 4, 5, 6, 7],
-              [(1, 2), (2, 3), (3, 4), (4, 5), (5, 6), (6, 7), (7, 1)])
+    grafo = lee_grafo_archivo(args.file_name)
 
     # Creamos nuestro objeto LayoutGraph
     layout_gr = LayoutGraph(
-        grafo=grafo_archivo,  # TODO: Cambiar para usar grafo leido de archivo
-        iters=args.iters,
-        refresh=1,
-        c1=0.1,
-        c2=5.0,
-        temperatura=args.temp,
-        verbose=args.verbose
+        grafo = grafo,
+        iters = args.iters,
+        refresh = 1,
+        c1 = 0.1,
+        c2 = 5.0,
+        temperatura = args.temp,
+        c_temp = 0.95,
+        verbose = args.verbose
     )
 
     # Ejecutamos el layout
