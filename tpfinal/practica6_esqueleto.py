@@ -63,7 +63,7 @@ def f_repultion(d,k):
 
 # Calcula la fuerza de gravedad
 def f_gravity(d,k):
-    return k/(d**2)
+    return 0.1 * f_attraction(d,k)
 
 def evitar_colisiones (i, x_coordenadas, y_coordenadas):
     changed = []
@@ -94,7 +94,7 @@ def evitar_colisiones (i, x_coordenadas, y_coordenadas):
 
 class LayoutGraph:
 
-    def __init__(self, grafo, iters, refresh, c1, c2, temperatura, c_temp, verbose=False):
+    def __init__(self, grafo, iters, refresh, c1, c2, temperatura, c_temp, verbose=False, color_graph=False):
         """
         Parámetros:
         grafo: grafo en formato lista
@@ -123,13 +123,17 @@ class LayoutGraph:
         self.temperatura = temperatura
         self.c_temp = c_temp
         self.verbose = verbose
+        self.color_graph = color_graph
 
 
-    def draws_graph(self, x_coordenadas, y_coordenadas):
+    def draws_graph(self, x_coordenadas, y_coordenadas, color):
         n_vertices = len(self.grafo[0])
         # x_coordenadas = coordenadas_random(n_vertices) # las coordenadas abria que pasarlas como parametro
         # y_coordenadas = coordenadas_random(n_vertices)
-        plt.scatter(x_coordenadas,y_coordenadas,color='00')
+        if (color):
+            plt.scatter(x_coordenadas,y_coordenadas)
+        else:
+            plt.scatter(x_coordenadas,y_coordenadas, color='00')
         for i in range(n_vertices):
             x_aristas = []
             y_aristas = []
@@ -141,7 +145,10 @@ class LayoutGraph:
                     x_aristas.append(x_coordenadas[j])
                     y_aristas.append(y_coordenadas[i])
                     y_aristas.append(y_coordenadas[j])
-                    plt.plot(x_aristas,y_aristas,color='00')
+                    if (color):
+                        plt.plot(x_aristas,y_aristas)
+                    else:
+                        plt.plot(x_aristas,y_aristas,color='00')
 
 
     def layout(self):
@@ -156,7 +163,8 @@ class LayoutGraph:
         # constantes de disperción de los nodos del grafo
         kr = self.c1 * math.sqrt((DIMENSION*DIMENSION) / n_vertices)
         ka = self.c2 * math.sqrt((DIMENSION*DIMENSION) / n_vertices)
-        kg = 0.98 * math.sqrt((DIMENSION*DIMENSION) / n_vertices)
+        # BORRAR SI NO LA USAMOS AL FINAL
+        # kg = 0.98 * math.sqrt((DIMENSION*DIMENSION) / n_vertices)
 
         centro = (DIMENSION/2,DIMENSION/2)
         
@@ -207,7 +215,7 @@ class LayoutGraph:
             # Calcular fuerzas de gravedad
             for i in range(n_vertices):
                 distance = math.sqrt((x_coordenadas[i] - centro[0])**2 + (y_coordenadas[i] - centro[1])**2)
-                mod_fg = f_gravity(distance, kg)
+                mod_fg = f_gravity(distance, ka)
                 fx = mod_fg * (centro[0] - x_coordenadas[i]) / distance
                 fy = mod_fg * (centro[1] - y_coordenadas[i]) / distance
                 accum_x[self.grafo[0][i]] = accum_x[self.grafo[0][i]] + fx
@@ -265,7 +273,7 @@ class LayoutGraph:
             ### PLOTEO ###
             if (k % self.refresh) == 0:
                 plt.axis([0,DIMENSION,0,DIMENSION])
-                self.draws_graph(x_coordenadas,y_coordenadas)
+                self.draws_graph(x_coordenadas,y_coordenadas, self.color_graph)
                 plt.pause(0.5)
                 plt.clf()
 
@@ -304,6 +312,18 @@ def main():
         'file_name',
         help='Archivo del cual leer el grafo a dibujar'
     )
+    # Color del grafo opcional, negro por defecto
+    parser.add_argument(
+        '-color',
+        action='store_true',
+        help='El grafo aparecerá con aristas y vértices coloreados'
+    )
+    parser.add_argument(
+        '-r', '--refresh',
+        type=int,
+        help='Especifica cada cuantas iteraciones se muestra una imagen del grafo',
+        default=2
+    )
 
     args = parser.parse_args()
 
@@ -314,12 +334,13 @@ def main():
     layout_gr = LayoutGraph(
         grafo = grafo,
         iters = args.iters,
-        refresh = 1,
+        refresh = args.refresh,
         c1 = 0.1,
         c2 = 5.0,
         temperatura = args.temp,
         c_temp = 0.95,
-        verbose = args.verbose
+        verbose = args.verbose,
+        color_graph = args.color
     )
 
     # Ejecutamos el layout
