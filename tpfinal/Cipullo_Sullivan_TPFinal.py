@@ -2,7 +2,7 @@
 
 # 6ta Practica Laboratorio 
 # Complementos Matematicos I
-# Ejemplo parseo argumentos
+# Katherine Sullivan e Ines Cipullo
 
 import math
 import argparse
@@ -10,9 +10,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 DIMENSION = 1000 # rango del gráfico
-EPSILON = 0.05
+EPSILON = 0.05 # distancia mínima tolerada entre dos vértitces
 
-# SI EL ALGORITMO ESTA BIEN IMPLEMENTADO, CADA GRAFO DEBERIA TENER UNA ÚNICA REPRESENTACIÓN ???
 
 def lee_grafo_archivo(file_path):
     '''
@@ -65,6 +64,7 @@ def f_repultion(d,k):
 def f_gravity(d,k):
     return 0.1 * f_attraction(d,k)
 
+# Dados 
 def evitar_colisiones (i, x_coordenadas, y_coordenadas):
     changed = []
 
@@ -81,11 +81,9 @@ def evitar_colisiones (i, x_coordenadas, y_coordenadas):
 
     if changed == [] :
         return
-
     else:
         for elem in changed: 
             evitar_colisiones(elem, x_coordenadas, y_coordenadas)
-
         evitar_colisiones(i, x_coordenadas, y_coordenadas)
 
     return
@@ -105,15 +103,11 @@ class LayoutGraph:
         temperatura: tempeatura inicial
         c_temp: constante de reducción de temperatura
         verbose: si está encendido, activa los comentarios
+        color_graph: si está encendido, el grafo está coloreado
         """
 
         # Guardo el grafo
         self.grafo = grafo
-
-        # Inicializo estado
-        # Completar
-        self.posiciones = {}
-        self.fuerzas = {}
 
         # Guardo opciones
         self.iters = iters
@@ -128,8 +122,6 @@ class LayoutGraph:
 
     def draws_graph(self, x_coordenadas, y_coordenadas, color):
         n_vertices = len(self.grafo[0])
-        # x_coordenadas = coordenadas_random(n_vertices) # las coordenadas abria que pasarlas como parametro
-        # y_coordenadas = coordenadas_random(n_vertices)
         if (color):
             plt.scatter(x_coordenadas,y_coordenadas)
         else:
@@ -155,25 +147,26 @@ class LayoutGraph:
         """
         Aplica el algoritmo de Fruchtermann-Reingold para obtener (y mostrar) un layout
         """
+        # Si está encendido verbose, verbose print funciona como la función print, si no verboseprint no hace nada.
         verboseprint = print if self.verbose else lambda *a: None
         
         n_vertices = len(self.grafo[0])
         x_coordenadas = coordenadas_random(n_vertices)
         y_coordenadas = coordenadas_random(n_vertices)      
-        # constantes de disperción de los nodos del grafo
+        # Constantes de disperción de los nodos del grafo
         kr = self.c1 * math.sqrt((DIMENSION*DIMENSION) / n_vertices)
         ka = self.c2 * math.sqrt((DIMENSION*DIMENSION) / n_vertices)
-        # BORRAR SI NO LA USAMOS AL FINAL
-        # kg = 0.98 * math.sqrt((DIMENSION*DIMENSION) / n_vertices)
 
         centro = (DIMENSION/2,DIMENSION/2)
         
-        dicc_vert_a_idx = {} # diccionario entre vértices y sus índices
+        dicc_vert_a_idx = {} # Diccionario entre vértices y sus índices
         for i in range(n_vertices):
             dicc_vert_a_idx[self.grafo[0][i]] = i
         
         # Inicializar temperatura
         t = self.temperatura
+        verboseprint("Temperatura inicial:",t)
+
 
         plt.show()
         for k in range(1, self.iters+1):
@@ -195,7 +188,6 @@ class LayoutGraph:
                 accum_y[e[0]] = accum_y[e[0]] + fy
                 accum_x[e[1]] = accum_x[e[1]] - fx
                 accum_y[e[1]] = accum_y[e[1]] - fy
-                # print("at entre ", e[0], "y ", e[1],"\nx: ",fx,"\ny: ",fy)
 
             # Calcular fuerzas de repulsión
             for i in range(n_vertices):
@@ -209,9 +201,7 @@ class LayoutGraph:
                         accum_y[self.grafo[0][i]] = accum_y[self.grafo[0][i]] + fy
                         accum_x[self.grafo[0][j]] = accum_x[self.grafo[0][j]] - fx
                         accum_y[self.grafo[0][j]] = accum_y[self.grafo[0][j]] - fy
-                        # print("rep entre ", self.grafo[0][i], "y ", self.grafo[0][j],"\nx: ",fx,"\ny: ",fy)
             
-            # NI IDEA SI ESTA BIEN, FALTARIA LA FUNCION QUE CALCULA LA FUERZA DE GRAVEDAD
             # Calcular fuerzas de gravedad
             for i in range(n_vertices):
                 distance = math.sqrt((x_coordenadas[i] - centro[0])**2 + (y_coordenadas[i] - centro[1])**2)
@@ -220,7 +210,6 @@ class LayoutGraph:
                 fy = mod_fg * (centro[1] - y_coordenadas[i]) / distance
                 accum_x[self.grafo[0][i]] = accum_x[self.grafo[0][i]] + fx
                 accum_y[self.grafo[0][i]] = accum_y[self.grafo[0][i]] + fy
-                # print("grav de", self.grafo[0][i],"\nx: ",fx,"\ny: ",fy)
 
             # Actualizar posiciones
             for i in range(n_vertices):
@@ -248,22 +237,6 @@ class LayoutGraph:
 
                 verboseprint("Posición del vértice",self.grafo[0][i],": (",x_coordenadas[i],",",y_coordenadas[i],")")
 
-                
-                # El volver a chocar?
-                # Pense fc como esta con un while hasta que nada choque
-                # pero eso clearly es costoso
-                # chequea solo hasta el punto que estamos y solo va achequear comparando
-                # con estos 2 nuevos
-
-                # NO SE
-                # seria afuera pero
-                
-
-                # cosas que capaz estaria weno pero si no fue
-                # ver de que no cambien tanto los numeros en esto que hice pues dumb
-                # y no se me ocurre otra forma de hacer esa fuerza~
-                # definir una funcion distance
-
             # Actualizar temperatura
             t = self.c_temp * t
             verboseprint("Temperatura actual:",t)
@@ -277,7 +250,6 @@ class LayoutGraph:
                 plt.pause(0.5)
                 plt.clf()
 
-    
         return
 
 
@@ -314,10 +286,11 @@ def main():
     )
     # Color del grafo opcional, negro por defecto
     parser.add_argument(
-        '-color',
+        '-c', '--color',
         action='store_true',
         help='El grafo aparecerá con aristas y vértices coloreados'
     )
+    # Especifica cada cuantas iteraciones se muestra una imagen del grafo
     parser.add_argument(
         '-r', '--refresh',
         type=int,
